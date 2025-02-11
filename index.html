@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sam 2  Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .question {
+            font-size: 30px;
+            margin: 10px 0;
+        }
+	#userAnswer {
+            font-size: 30px;
+            margin: 10px 0;
+        }
+        .input-container {
+            margin: 40px 0;
+	font-size: 30px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 2em;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Test Your Knowledge of Hebrew Verbs</h1>
+
+    <div id="question" class="question"></div>
+
+    <div class="input-container">
+        <input type="text" id="userAnswer" placeholder="Enter conjugation here..." />
+        <button onclick="checkAnswer()">Submit</button>
+    </div>
+
+    <div id="result"></div>
+    <button onclick="nextQuestion()">Next Question</button>
+<button onclick="lastQuestion()">Last Question</button>
+    <script>
+        // List of Hebrew verbs in different Binyanim (simplified)
+        const verbs = [
+		{ verb: "noun", binyan: " (fem) comparison", conjugation: "הַשְׁוָאָה" },  // 
+            	{ verb: "noun", binyan: "connection", conjugation: "קִישּׁוּר" },  // 
+		{ verb: "סמן", binyan: "Pual being marked", conjugation: "מְסֻמָּן" },  // 
+		{ verb: "phrase", binyan: "a connection marking", conjugation: "קִישּׁוּר מְסֻמָּן" },  // 
+            	{ verb: "noun", binyan: "context", conjugation: "הֶקשֵׁר" },  // 
+            	{ verb: "phrase", binyan: "infinitive absolute", conjugation: "מָקוֹר מוּחְלָט" },  //             	
+		{ verb: "אמר", binyan: "Qal ַand she said ", conjugation: "וַתֹּאמַר" },  // 
+		{ verb: "אמר", binyan: "Qal ַand he said", conjugation: "וַיֹּאמֶר" },  // 
+            	{ verb: "אכל", binyan: "Qal ַshe would (not) eat", conjugation: "תֹאכַל" },  // 
+                { verb: "אכל", binyan: "Qal ַyou(f) will  (not) eat", conjugation: "תֹאכְלִי" },  // 
+		{ verb: "אכל", binyan: "Qal ַshe ate", conjugation: "אָכְלָה" },  // 
+		{ verb: "בכה", binyan: "מָקוֹר מוּחְלָט and she truely cried", conjugation: "וּבָכֹה תִבְכֶּה" },  // 
+		{ verb: "בכה", binyan: "Qal (why) will you(f) cry", conjugation: "תִבְכִּי" },  // 
+            //ג
+		{ verb: "דבר", binyan: "Piel she speaking", conjugation: "מְדַבֶּרֶת" },  //
+		{ verb: "דבר", binyan: "Piel I spoke", conjugation: "דִּבַּ֥רְתִּי" },  // 
+
+		{ verb: "הלך", binyan: "ַ֗ Go! (f s)", conjugation: "לְכִי" },  // 
+		//ו
+		{ verb: "זבח", binyan: "Qal and to sacrifice", conjugation: "וְלִזְבֹּחַ" },  // 
+		{ verb: "זבח נתן", binyan: "Qal and he sacrificed and he would give", conjugation: "וַיִּזְבַּח וְנָתַן" },  // ֹ
+		{ verb: "זכרְ",binyan: "Qal and you will remember me", conjugation: "וּזְכַרְתַּנִי" },  // 
+		 { verb: "חשׁבֶ֥", binyan: "Qal and he thought her", conjugation: "וַיַּחְשְׁבֶהָ" },  // 
+
+		//
+	
+            { verb: "ישׁב", binyan: "Qal he was sitting", conjugation: "יֹשֵׁב" },  // 
+            { verb: "כעס", binyan: "Piel and she would provoke her regularly", conjugation: "וְכִעֲסַתָּה" },  // 
+         { verb: "כעס", binyan: "Hiphil she  provoked her (regularly)", conjugation: "תַּכְעִסֶנָּה" },  // 
+//l
+		//m
+	   { verb: "נוע", binyan: "Qal (f) they trembling", conjugation: "נָּעוֹת" },  // 
+		{ verb: "נדר", binyan: "Qal she swore an oath", conjugation: "וַתִּדֹּר נֶדֶר" },  // 
+            { verb: "נתן", binyan: "Qal but to Hannah he gave", conjugation: "וּלְחַנָּה יִתֵּן" },  // 
+	    { verb: "נתן", binyan: "Qal not you will give", conjugation: "אַל־תִּתֵּן֙" },  // 
+	
+		{ verb: "סור", binyan: "Hifil turn from (f imp sing)", conjugation: "הָסִ֥ירִי" },  // 
+  		{ verb: "עלה", binyan: "֗Qal P and he would go up (regular) ", conjugation: "וְעָלָה" },  // 2.1
+  		{ verb: "עשׂה", binyan: "֗Qal P he would make (סיכום ההסבר) ", conjugation: "יַעֲשֶׂה" },  // 2.1
+             	{ verb: "ענה", binyan: "֗Qal and she answered", conjugation: "וַתַּ֨עַן" },  // 
+		{ verb: "ענה", binyan: "֗Qal and he answered", conjugation: "וַיַּ֧עַן" },  // 
+
+		{ verb: "פּלל ", binyan: "Hithpael and she prayed", conjugation: "וַתִּתְפַּלֵּל " },  //
+            { verb: "קום", binyan: "Qal and she got up", conjugation: "וַתָּקָם" },  // 
+            { verb: "רעע", binyan: "Qal he is bad (continuous)", conjugation: "יֵרַ֣ע" },  // 
+
+            { verb: "ראה", binyan: "מָקוֹר מוּחְלָט (if) you (m) truely see", conjugation: "רָאֹה תִרְאֶה" },  // 2.4
+            { verb: "רבה", binyan: "מָקוֹר נטוי Hifil she increased", conjugation: "הִרְבְּתָה" },  // 
+            { verb: "שׁכח", binyan: "Qal you will forget", conjugation: "תִשְׁכַּ֣ח" },  // 
+            { verb: "שׁמר", binyan: "Qal he watching over", conjugation: "שֹׁמֵר" },  // 
+            { verb: "שּׁמע", binyan: "niphal (couldn't) be heard ", conjugation: "יִשָּׁמֵ֑עַ" },  //
+            { verb: "שׁכרִ֑", binyan: "Hithpael will you make yourself drunk", conjugation: "תִּשְׁתַּכָּרִ֑ין" },  // 2.4
+            { verb: "שׁתה", binyan: "Qal I drank", conjugation: "שָׁתִ֑יתִי" },  // 
+            { verb: "שׁפך", binyan: "Qal and I poured", conjugation: "וָאֶשְׁפֹּ֥ךְ" },  // 
+	 { verb: "שׁאל", binyan: "Qal you(f) asked", conjugation: "שָׁאַ֖לְתְּ" },  // 
+
+		{ verb: "שאל", binyan: "Hifil I will give him ", conjugation: "הִשְׁאִלְתִּהוּ" },  // 
+            { verb: "סור", binyan: "Hifil turn from (f imp sing)", conjugation: "הָסִ֥ירִי" },  // 
+            { verb: "סור", binyan: "Hifil turn from (f imp sing)", conjugation: "הָסִ֥ירִי" },  // 
+            { verb: "סור", binyan: "Hifil turn from (f imp sing)", conjugation: "הָסִ֥ירִי" },  // 
+
+        ];
+
+        let currentVerbIndex = -1;
+
+        // Function to get  verb and display the question
+        function nextQuestion() {
+            currentVerbIndex = currentVerbIndex+1;
+            const verb = verbs[currentVerbIndex];
+            document.getElementById('question').innerHTML = 
+                `Conjugate the verb <b>${verb.verb}</b> in the <b>${verb.binyan}</b> binyan.`;
+            document.getElementById('userAnswer').value = "";
+            document.getElementById('result').innerHTML = "";
+        }
+ function lastQuestion() {
+            currentVerbIndex = currentVerbIndex-1;
+            const verb = verbs[currentVerbIndex];
+            document.getElementById('question').innerHTML = 
+                `Conjugate the verb <b>${verb.verb}</b> in the <b>${verb.binyan}</b> binyan.`;
+            document.getElementById('userAnswer').value = "";
+            document.getElementById('result').innerHTML = "";
+        }
+
+        // Function to check the user's answer
+        function checkAnswer() {
+            const userAnswer = document.getElementById('userAnswer').value.trim();
+            const correctAnswer = verbs[currentVerbIndex].conjugation;
+
+            if (userAnswer === correctAnswer) {
+                document.getElementById('result').innerHTML = "Correct! Well done!";
+                document.getElementById('result').style.color = "green";
+            } else {
+                document.getElementById('result').innerHTML = `Incorrect. The correct answer is: <b>${correctAnswer}</b>`;
+                document.getElementById('result').style.color = "red";
+            }
+        }
+
+        // Start the first question
+        nextQuestion();
+    </script>
+
+</body>
+</html>
