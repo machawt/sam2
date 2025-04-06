@@ -1,125 +1,152 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sam 2  Quiz</title>
+    <title>Indonesian Phrases Matching Quiz</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
             text-align: center;
-            margin-top: 20px;
         }
-        .question {
-            font-size: 30px;
-            margin: 10px 0;
-        }
-	#userAnswer {
-            font-size: 30px;
-            margin: 10px 0;
-        }
-        .input-container {
-            margin: 40px 0;
-	font-size: 30px;
-        }
-        #result {
-            margin-top: 20px;
-            font-size: 2em;
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
         }
         button {
-            padding: 10px 20px;
+            padding: 15px 30px;
             font-size: 16px;
             cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Test Your Knowledge of Hebrew Verbs</h1>
+    <h1>Indonesian Phrases Matching Quiz</h1>
 
-    <div id="question" class="question"></div>
-
-    <div class="input-container">
-        <input type="text" id="userAnswer" placeholder="Enter conjugation here..." />
-        <button onclick="checkAnswer()">Submit</button>
+    <div class="button-container" id="button-container">
+        <!-- The buttons for matching pairs will be generated here -->
     </div>
 
     <div id="result"></div>
-    <button onclick="nextQuestion()">Next Question</button>
-<button onclick="lastQuestion()">Last Question</button>
+
     <script>
-        // List of Hebrew verbs in different Binyanim (simplified)
-        const verbs = [
-		{ verb: "noun", binyan: " (fem) comparison", conjugation: "הַשְׁוָאָה" },  // 
-            	{ verb: "noun", binyan: "connection", conjugation: "קִישּׁוּר" },  // 
-		{ verb: "סמן", binyan: "Pual being marked", conjugation: "מְסֻמָּן" },  // 
-		{ verb: "phrase", binyan: "a connection marking", conjugation: "קִישּׁוּר מְסֻמָּן" },  // 
-            	{ verb: "noun", binyan: "context", conjugation: "הֶקשֵׁר" },  // 
-            	{ verb: "phrase", binyan: "infinitive absolute", conjugation: "מָקוֹר מוּחְלָט" },  //             	
-            { verb: "דבר", binyan: "ִPiel you plural will speak", conjugation: "תְדַבּרוּ" },  // 
-            { verb: "יצא", binyan: "Qal he will go out", conjugation: "יֵצֵא" },  // 
-
-		{ verb: "כשׁל", binyan: "Nifal participle and they stumble", conjugation: "וְנִכְשָׁלִ֖ים" },  // 
-                        { verb: "עלץ", binyan: "Qal he exalted", conjugation: "עָלַץ" },  // 
-
-		{ verb: "רמה", binyan: "Qal she lifted", conjugation: "רָמָה" },  // 
-            { verb: "רחב", binyan: "Qal he widened", conjugation: "רָ֤חַב" },  // 
-	 { verb: "שמחְ", binyan: "Qal I rejoiced", conjugation: "שָׂמַחְתִּי" },  // 
-
-		{ verb: "תכנ", binyan: "Nifal they were weighed", conjugation: "נִתְכְּנוּ" },  // 
-
-         { verb: "רְבה דבר", binyan: "Hifil do not make increase Piel you speaking both imperfect plural", conjugation: "אַל־תַּרְבּוּ תְדַבְּרוּ" },  // 
-
-            { verb: "שכר", binyan: "Nifil they were hired out", conjugation: "נִשְׂכָּרוּ" },  // 
-            { verb: "מות", binyan: "Hifil he is killing", conjugation: "מֵמִ֣ית" },  // 
-            { verb: "חיה", binyan: "Piel and he is giving life", conjugation: "וּמְחַיֶּה" },  // 
-		
-            { verb: "ירד", binyan: "Hifil and He is bringing down", conjugation: "מוֹרִ֥יד" },  // 
-            { verb: "עלה", binyan: " and he will raise up", conjugation: "וַיָּֽעַל" },  // 
-            { verb: "חיה", binyan: "Piel and he is giving life", conjugation: "וּמְחַיֶּה" },  //
-            { verb: "רום", binyan: "Polel he is exalting", conjugation: "מְרוֹמֵֽם" },  // 
-            { verb: "שְפל", binyan: "Hifil  He is lowering", conjugation: "מַשְׁפִּ֖יל" },  // 
-            { verb: "עשר", binyan: "Hifil and He is making rich", conjugation: "וּמַעֲשִׁ֑יר" },  // 
-            { verb: "ירשׁ", binyan: "Hifil  He is making poor ", conjugation: "מוֹרִ֣ישׁ" },  // 
-
+        // Define the phrases and their translations
+        const phrases = [
+            { id: 1, text: "Apa kabar?", translation: "How are you?" },
+            { id: 2, text: "Terima kasih", translation: "Thank you" },
+            { id: 3, text: "Selamat pagi", translation: "Good morning" },
+            { id: 4, text: "Selamat malam", translation: "Good night" },
+            { id: 5, text: "Tolong", translation: "Please" },
+            { id: 6, text: "Maaf", translation: "Sorry" },
+            { id: 7, text: "Selamat datang", translation: "Welcome" },
+            { id: 8, text: "Apa nama Anda?", translation: "What is your name?" }
         ];
 
-        let currentVerbIndex = -1;
+        // Create button elements for each phrase and translation
+        const buttons = [];
+        phrases.forEach((phrase) => {
+            buttons.push({ id: phrase.id, text: phrase.text });
+            buttons.push({ id: phrase.id + 100, text: phrase.translation });
+        });
 
-        // Function to get  verb and display the question
-        function nextQuestion() {
-            currentVerbIndex = currentVerbIndex+1;
-            const verb = verbs[currentVerbIndex];
-            document.getElementById('question').innerHTML = 
-                `Conjugate the verb <b>${verb.verb}</b> in the <b>${verb.binyan}</b> binyan.`;
-            document.getElementById('userAnswer').value = "";
-            document.getElementById('result').innerHTML = "";
-        }
- function lastQuestion() {
-            currentVerbIndex = currentVerbIndex-1;
-            const verb = verbs[currentVerbIndex];
-            document.getElementById('question').innerHTML = 
-                `Conjugate the verb <b>${verb.verb}</b> in the <b>${verb.binyan}</b> binyan.`;
-            document.getElementById('userAnswer').value = "";
-            document.getElementById('result').innerHTML = "";
-        }
-
-        // Function to check the user's answer
-        function checkAnswer() {
-            const userAnswer = document.getElementById('userAnswer').value.trim();
-            const correctAnswer = verbs[currentVerbIndex].conjugation;
-
-            if (userAnswer === correctAnswer) {
-                document.getElementById('result').innerHTML = "Correct! Well done!";
-                document.getElementById('result').style.color = "green";
-            } else {
-                document.getElementById('result').innerHTML = `Incorrect. The correct answer is: <b>${correctAnswer}</b>`;
-                document.getElementById('result').style.color = "red";
+        // Shuffle the buttons array to display them in random order
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
             }
         }
 
-        // Start the first question
-        nextQuestion();
+        shuffle(buttons);
+
+        // Create buttons and append them to the container
+        const buttonContainer = document.getElementById("button-container");
+        buttons.forEach((button) => {
+            const btn = document.createElement("button");
+            btn.id = `btn${button.id}`;
+            btn.innerText = button.text;
+            btn.onclick = () => handleClick(button.id);
+            buttonContainer.appendChild(btn);
+        });
+
+        let firstButton = null;
+        let secondButton = null;
+        let matchedPairs = 0;
+
+        function handleClick(buttonId) {
+            const button = document.getElementById(`btn${buttonId}`);
+            button.disabled = true; // Disable the button once it's clicked
+
+            if (!firstButton) {
+                firstButton = { id: buttonId, element: button };
+            } else {
+                secondButton = { id: buttonId, element: button };
+
+                if (isMatch(firstButton.id, secondButton.id)) {
+                    // Correct match
+                    matchedPairs++;
+                    firstButton.element.style.display = 'none';
+                    secondButton.element.style.display = 'none';
+                    resetSelection();
+
+                    if (matchedPairs === 8) {
+                        document.getElementById("result").innerText = 'Congratulations! You completed the quiz!';
+                    }
+                } else {
+                    // Incorrect match, reset after a brief delay
+                    setTimeout(() => {
+                        firstButton.element.disabled = false;
+                        secondButton.element.disabled = false;
+                        resetSelection();
+                    }, 500);
+                }
+            }
+        }
+
+        function isMatch(id1, id2) {
+            const matches = [
+                { pair: [1, 101] }, // Apa kabar? - How are you?
+                { pair: [2, 102] }, // Terima kasih - Thank you
+                { pair: [3, 103] }, // Selamat pagi - Good morning
+                { pair: [4, 104] }, // Selamat malam - Good night
+                { pair: [5, 105] }, // Tolong - Please
+                { pair: [6, 106] }, // Maaf - Sorry
+                { pair: [7, 107] }, // Selamat datang - Welcome
+                { pair: [8, 108] }  // Apa nama Anda? - What is your name?
+            ];
+
+            return matches.some(match => 
+                (match.pair[0] === id1 && match.pair[1] === id2) || 
+                (match.pair[0] === id2 && match.pair[1] === id1)
+            );
+        }
+
+        function resetSelection() {
+            firstButton = null;
+            secondButton = null;
+        }
     </script>
 
 </body>
